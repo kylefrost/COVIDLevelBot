@@ -1,3 +1,8 @@
+# Custom
+credentials.py
+tweet_ID.txt
+us_community_burden_by_county.json
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
