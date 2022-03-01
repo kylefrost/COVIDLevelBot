@@ -16,6 +16,9 @@ class CDCData:
         return data_version
 
     def get_current_status(self, county, state):
+        if "County" in county:
+            county = county.replace("County", "")
+
         if len(state) == 2:
             logger.info("Converting " + state + " to full name.")
             state = self.map_abb(state.upper())
