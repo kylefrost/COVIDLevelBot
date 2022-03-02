@@ -17,7 +17,7 @@ class CDCData:
 
     def get_current_status(self, county, state):
         if "County" in county:
-            county = county.replace("County", "")
+            county = county.replace("County", "").strip()
 
         if len(state) == 2:
             logger.info("Converting " + state + " to full name.")
