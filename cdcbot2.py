@@ -24,24 +24,25 @@ logging.basicConfig(level=logging.INFO)
 logger.setLevel(logging.INFO)
 
 def get_data(tweet):
-    try:
-        tw = tweet.full_text.split(' ', 1)[-1]
-        county_state = ""
+    #try:
+    tw = tweet.full_text.split(' ', 1)[-1]
+    county_state = ""
 
-        if ',' in tw:
-            county_state = [x.strip() for x in tw.split(',')]
-            if len(county_state) != 2:
-                return 1, 0
-        else:
-            return 2, 0
-        
-        current_status = cdcdata.get_current_status(county_state[0], county_state[1])
+    if ',' in tw:
+        county_state = [x.strip() for x in tw.split(',')]
+        logger.info(county_state)
+        if len(county_state) != 2:
+            return 1, 0
+    else:
+        return 2, 0
+    
+    current_status = cdcdata.get_current_status(county_state[0], county_state[1])
 
-        current_version = cdcdata.get_current_version()
+    current_version = cdcdata.get_current_version()
 
-        return current_status, current_version
-    except:
-        return 3, 0
+    return current_status, current_version
+    #except:
+    #    return 3, 0
 
 
 def get_last_tweet(file):

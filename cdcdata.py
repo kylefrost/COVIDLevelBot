@@ -2,6 +2,9 @@ import json
 import datetime
 import logging
 import credentials
+import re
+
+from datetime import datetime
 
 logger = logging.getLogger()
 logging.basicConfig(level=logging.INFO)
@@ -11,17 +14,21 @@ class CDCData:
     def get_current_version(self):
         f = open(credentials.cdcfile)
         cdcdata = json.load(f)
-        data_version = datetime.datetime.strptime(cdcdata['dataFileName'].partition('.')[0][-8:], '%Y%m%d').strftime('%b %-d, %Y')
+        dataFileName = cdcdata['dataFileName']
+        version = re.search(r'\d{4}\d{2}\d{2}', dataFileName)
+        data_version = datetime.strptime(version.group(), '%Y%m%d').strftime('%b %-d, %Y')
         f.close()
         return data_version
 
     def get_current_status(self, county, state):
-        if "County" in county:
-            county = county.replace("County", "").strip()
+        if "County" not in county:
+            county = county + " County"
 
-        if len(state) == 2:
-            logger.info("Converting " + state + " to full name.")
-            state = self.map_abb(state.upper())
+        if len(state) != 2:
+            logger.info("Converting " + state + " to abbreviation.")
+            state = self.map_abb(state.title())
+        else:
+            state = state.upper()
 
         logger.info("Getting data for " + county + ", " + state) 
 
@@ -29,7 +36,7 @@ class CDCData:
         cdcdata = json.load(f)
         i = 0
         for c in cdcdata['data']:
-            if c['County'] == county + ', ' + state + ', US':
+            if c['Name'] == county + ', ' + state:
                 break
             else:
                 i = i + 1
@@ -102,4 +109,4 @@ class CDCData:
         # invert the dictionary
         abbrev_to_us_state = dict(map(reversed, us_state_to_abbrev.items()))
 
-        return abbrev_to_us_state[abb]
+        return us_state_to_abbrev[abb]
